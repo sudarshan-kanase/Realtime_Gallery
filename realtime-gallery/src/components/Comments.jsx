@@ -10,9 +10,9 @@ export default function Comments({ imageId }) {
     comments: {
       $: {
         where: { imageId },
-        order: { createdAt: "asc" }
-      }
-    }
+        order: { createdAt: "asc" },
+      },
+    },
   });
 
   const comments = data?.comments || [];
@@ -21,12 +21,12 @@ export default function Comments({ imageId }) {
     if (!text.trim()) return;
 
     db.transact([
-      db.tx.comments.create({
+      db.tx.comments({
         imageId,
         text,
         userId,
-        createdAt: Date.now()
-      })
+        createdAt: Date.now(),
+      }),
     ]);
 
     setText("");
@@ -34,22 +34,24 @@ export default function Comments({ imageId }) {
 
   return (
     <div className="mt-4">
-      {comments.map((c) => (
-        <p key={c.id} className="text-sm bg-gray-100 p-2 rounded">
-          {c.text}
-        </p>
-      ))}
+      <div className="space-y-2">
+        {comments.map((c) => (
+          <p key={c.id} className="text-sm bg-gray-100 p-2 rounded">
+            {c.text}
+          </p>
+        ))}
+      </div>
 
       <div className="flex gap-2 mt-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="border p-2 flex-1"
+          className="border p-2 flex-1 rounded"
           placeholder="Add comment"
         />
         <button
           onClick={addComment}
-          className="bg-black text-white px-3"
+          className="bg-black text-white px-3 rounded"
         >
           Send
         </button>

@@ -10,41 +10,34 @@ export default function EmojiBar({ imageId }) {
     reactions: {
       $: {
         where: { imageId },
-        order: { createdAt: "asc" }
-      }
-    }
+      },
+    },
   });
 
-  const reactions = data?.reactions || [];
+  const reactions = data?.reactions ?? [];
 
   const addReaction = (emoji) => {
-    db.transact([
+    db.transact(
       db.tx.reactions.create({
         imageId,
         emoji,
         userId,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       })
-    ]);
+    );
   };
 
   return (
-    <div className="flex items-center gap-4 mt-4">
+    <div className="flex gap-4 mt-4 items-center">
       {EMOJIS.map((e) => (
-        <button
-          key={e}
-          onClick={() => addReaction(e)}
-          className="text-2xl hover:scale-125 transition"
-        >
+        <button key={e} onClick={() => addReaction(e)} className="text-2xl">
           {e}
         </button>
       ))}
 
-      <div className="flex gap-2">
-        {reactions.map((r) => (
-          <span key={r.id}>{r.emoji}</span>
-        ))}
-      </div>
+      {reactions.map((r) => (
+        <span key={r.id}>{r.emoji}</span>
+      ))}
     </div>
   );
 }
