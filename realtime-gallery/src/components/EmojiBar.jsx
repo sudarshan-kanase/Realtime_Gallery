@@ -1,3 +1,4 @@
+import { db } from "../api/instantdb";
 import { getUserId } from "../store/user";
 
 const EMOJIS = ["❤️", "🔥", "👍", "😂"];
@@ -16,9 +17,9 @@ export default function EmojiBar({ imageId }) {
 
   const reactions = data?.reactions ?? [];
 
-  const addReaction = (emoji) => {
-    db.transact([
-      db.tx.reactions.insert({
+  const addReaction = async (emoji) => {
+    await db.transact([
+      db.tx.reactions.create({
         imageId,
         emoji,
         userId,
@@ -28,7 +29,7 @@ export default function EmojiBar({ imageId }) {
   };
 
   return (
-    <div className="flex items-center gap-4 mt-3">
+    <div className="flex items-center gap-4 mt-4">
       {EMOJIS.map((e) => (
         <button
           key={e}
@@ -39,7 +40,7 @@ export default function EmojiBar({ imageId }) {
         </button>
       ))}
 
-      <div className="flex gap-2 text-lg">
+      <div className="flex gap-1">
         {reactions.map((r) => (
           <span key={r.id}>{r.emoji}</span>
         ))}

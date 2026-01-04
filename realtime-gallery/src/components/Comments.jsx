@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { db } from "../api/instantdb";
 import { getUserId } from "../store/user";
 
 export default function Comments({ imageId }) {
@@ -16,11 +17,11 @@ export default function Comments({ imageId }) {
 
   const comments = data?.comments ?? [];
 
-  const addComment = () => {
+  const addComment = async () => {
     if (!text.trim()) return;
 
-    db.transact([
-      db.tx.comments.insert({
+    await db.transact([
+      db.tx.comments.create({
         imageId,
         text,
         userId,
@@ -33,11 +34,11 @@ export default function Comments({ imageId }) {
 
   return (
     <div className="mt-4">
-      <div className="space-y-2 max-h-40 overflow-y-auto">
+      <div className="space-y-2">
         {comments.map((c) => (
-          <div key={c.id} className="bg-gray-100 p-2 rounded text-sm">
+          <p key={c.id} className="bg-gray-100 p-2 rounded text-sm">
             {c.text}
-          </div>
+          </p>
         ))}
       </div>
 
@@ -50,7 +51,7 @@ export default function Comments({ imageId }) {
         />
         <button
           onClick={addComment}
-          className="bg-black text-white px-4 rounded"
+          className="bg-black text-white px-3 rounded"
         >
           Send
         </button>
