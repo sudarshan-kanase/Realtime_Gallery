@@ -15,17 +15,23 @@ export default function EmojiBar({ imageId }) {
     },
   });
 
-  const reactions = data?.reactions ?? [];
+  const reactions = data?.reactions || [];
 
   const addReaction = async (emoji) => {
-    await db.transact([
-      db.tx.reactions.create({
-        imageId,
-        emoji,
-        userId,
-        createdAt: Date.now(),
-      }),
-    ]);
+    await db.transact({
+      __ops: [
+        {
+          insert: {
+            reactions: {
+              imageId,
+              emoji,
+              userId,
+              createdAt: Date.now(),
+            },
+          },
+        },
+      ],
+    });
   };
 
   return (
@@ -40,7 +46,7 @@ export default function EmojiBar({ imageId }) {
         </button>
       ))}
 
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         {reactions.map((r) => (
           <span key={r.id}>{r.emoji}</span>
         ))}
