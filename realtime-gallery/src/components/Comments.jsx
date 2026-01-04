@@ -20,20 +20,14 @@ export default function Comments({ imageId }) {
   const addComment = async () => {
     if (!text.trim()) return;
 
-    await db.transact({
-      __ops: [
-        {
-          insert: {
-            comments: {
-              imageId,
-              text,
-              userId,
-              createdAt: Date.now(),
-            },
-          },
-        },
-      ],
-    });
+    db.transact([
+      db.tx.comments({
+        text,
+        imageId,
+        userId,
+        createdAt: Date.now(),
+      }),
+    ]);
 
     setText("");
   };
