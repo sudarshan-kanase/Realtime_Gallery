@@ -1,42 +1,31 @@
+// components/EmojiBar.jsx - SIMPLE VERSION
 import { db } from "../api/instantdb";
-import { getUserId } from "../store/user";
 
 const EMOJIS = ["❤️", "🔥", "👍", "😂"];
 
 export default function EmojiBar({ imageId }) {
-  const userId = getUserId();
-
-  const { data } = db.useQuery({
-    reactions: {
-      $: {
-        where: { imageId },
-      },
-    },
-  });
-
-  const reactions = data?.reactions ?? [];
+  const userId = localStorage.getItem("userId") || `user_${Date.now()}`;
 
   const addReaction = (emoji) => {
-    db.transact(
-      db.tx.reactions.create({
-        imageId,
-        emoji,
-        userId,
-        createdAt: Date.now(),
-      })
-    );
+    // SIMPLE TRANSACTION
+    db.transact({
+      reactions: {
+        [Date.now().toString()]: {
+          imageId,
+          emoji,
+          userId,
+          createdAt: Date.now(),
+        }
+      }
+    });
   };
 
   return (
-    <div className="flex gap-4 mt-4 items-center">
-      {EMOJIS.map((e) => (
+    <div className="flex gap-2 mt-2">
+      {EMOJIS.map(e => (
         <button key={e} onClick={() => addReaction(e)} className="text-2xl">
           {e}
         </button>
-      ))}
-
-      {reactions.map((r) => (
-        <span key={r.id}>{r.emoji}</span>
       ))}
     </div>
   );
