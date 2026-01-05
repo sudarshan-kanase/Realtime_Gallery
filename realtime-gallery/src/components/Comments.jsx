@@ -8,52 +8,45 @@ export default function Comments({ imageId }) {
 
   const { data } = db.useQuery({
     comments: {
-      $: {
-        where: { imageId },
-        order: { createdAt: "asc" },
-      },
+      $: { where: { imageId }, order: { createdAt: "asc" } },
     },
   });
 
-  const comments = data?.comments || [];
+  const comments = data?.comments ?? [];
 
-  const addComment = async () => {
+  const addComment = () => {
     if (!text.trim()) return;
 
-    await db.transact(
-      db.tx.comments({
-        text,
+    db.transact([
+      db.tx.comments.create({
         imageId,
+        text,
         userId,
         createdAt: Date.now(),
-      })
-    );
+      }),
+    ]);
 
     setText("");
   };
 
   return (
-    <div className="mt-4 space-y-3">
-      {comments.map((c) => (
-        <p
-          key={c.id}
-          className="text-sm bg-gray-100 px-3 py-2 rounded-lg"
-        >
-          {c.text}
-        </p>
-      ))}
+    <div className="mt-4">
+      <div className="space-y-2">
+        {comments.map((c) => (
+          <p key={c.id} className="bg-gray-100 p-2 rounded text-sm">
+            {c.text}
+          </p>
+        ))}
+      </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Add a comment..."
-          className="flex-1 border rounded-lg px-3 py-2 text-sm"
+          className="border p-2 flex-1 rounded"
+          placeholder="Add comment"
         />
-        <button
-          onClick={addComment}
-          className="bg-black text-white px-4 py-2 rounded-lg"
-        >
+        <button onClick={addComment} className="bg-black text-white px-3 rounded">
           Send
         </button>
       </div>
