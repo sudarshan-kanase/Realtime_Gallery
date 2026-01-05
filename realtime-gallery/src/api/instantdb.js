@@ -1,4 +1,4 @@
-import { init } from "@instantdb/react";
+import { init } from "@instantdb/core";
 import schema from "../instant.schema";
 
 // Hard-coded InstantDB App ID
@@ -6,8 +6,8 @@ import schema from "../instant.schema";
 // In production, it is recommended to move this to an environment variable
 const appId = "0b99c891-82a4-4ec1-84c6-1102fc8cb1b7";
 
-// Debug log to verify App ID during development
-console.log("INSTANT APP ID:", appId);
+// Debug log to verify App ID during developmentq
+// console.log("INSTANT APP ID:", appId);
 
 // Initialize InstantDB with App ID and schema
 // This creates the database connection instance
